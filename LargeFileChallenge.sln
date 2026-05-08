@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.FileGene
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.FileSorter", "LargeFileChallenge.FileSorter\LargeFileChallenge.FileSorter.csproj", "{D17638BF-006E-AFDC-A4D5-E7E8E2ADCAF8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.SampleDownloader", "LargeFileChallenge.SampleDownloader\LargeFileChallenge.SampleDownloader.csproj", "{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{D17638BF-006E-AFDC-A4D5-E7E8E2ADCAF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D17638BF-006E-AFDC-A4D5-E7E8E2ADCAF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D17638BF-006E-AFDC-A4D5-E7E8E2ADCAF8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
