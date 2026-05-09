@@ -1,14 +1,31 @@
 ﻿using LargeFileChallenge.FileGenerator;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Serilog;
+using System.Globalization;
 
-var consoleFileSizeProvider = new ConsoleFileSizeProvider(new FileSizeParser());
+using var host = CreateDefaultBuilder().Build();
+await host.RunAsync();
 
-var (terminate, targetSize) = consoleFileSizeProvider.GetFileSize();
-
-if (terminate) {
-    Console.WriteLine("Exiting...");
-    return;
+static IHostBuilder CreateDefaultBuilder()
+{
+    return Host.CreateDefaultBuilder()
+        .ConfigureAppConfiguration(app =>
+        {
+            var filename = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "appsettings.json");
+            app.AddJsonFile(filename, optional: false);
+        })
+        .ConfigureServices((context, services) => {
+            services.AddFileGeneratorServices();
+            services.AddSingleton(Console.Out);
+            services.AddSingleton(Console.In);
+        })
+        .UseSerilog((context, loggerConfig) =>
+        {
+            loggerConfig
+                .ReadFrom.Configuration(context.Configuration)
+                .Enrich.FromLogContext()
+                .WriteTo.Console(formatProvider: CultureInfo.InvariantCulture);
+        });
 }
-
-var fileContentGenerator = new FileContentGenerator();
-await fileContentGenerator.Generate("SampleStrings.txt", "LargeFile.txt", targetSize);
-

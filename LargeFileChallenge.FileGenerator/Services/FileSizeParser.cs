@@ -1,8 +1,9 @@
-﻿using System.Text.RegularExpressions;
+﻿using LargeFileChallenge.FileGenerator.Abstractions;
+using System.Text.RegularExpressions;
 
 namespace LargeFileChallenge.FileGenerator;
 
-public partial class FileSizeParser
+public partial class FileSizeParser : IFileSizeParser
 {
     [GeneratedRegex(
         @"^(?<size>\d+)\s*(?<unit>B|KB|MB|GB|TB)$",

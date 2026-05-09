@@ -1,8 +1,9 @@
-﻿using System.Text;
+﻿using LargeFileChallenge.FileGenerator.Abstractions;
+using System.Text;
 
-namespace LargeFileChallenge.FileGenerator;
+namespace LargeFileChallenge.FileGenerator.Services;
 
-public class FileContentGenerator
+public class FileContentGenerator : IFileContentGenerator
 {
     private const int MaxNumber = 100000;
 
