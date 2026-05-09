@@ -20,7 +20,7 @@ public class FileGeneratorService(
 
         if (!terminate)
         {
-            await _fileContentGenerator.Generate("SampleStrings.txt", "LargeFile.txt", targetSize, cancellationToken);
+            await _fileContentGenerator.GenerateAsync("SampleStrings.txt", "LargeFile.txt", targetSize, cancellationToken);
             await _textWriter.WriteLineAsync("File has been generated successfully");
             await _textWriter.WriteLineAsync();
         }

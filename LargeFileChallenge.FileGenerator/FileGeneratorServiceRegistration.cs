@@ -11,6 +11,7 @@ public static class FileGeneratorServiceRegistration
         services.AddScoped<IFileContentGenerator, FileContentGenerator>();
         services.AddScoped<IFileSizeParser, FileSizeParser>();
         services.AddScoped<IConsoleFileSizeProvider, ConsoleFileSizeProvider>();
+        services.AddScoped<IConsoleProgressReporter, ConsoleProgressReporter>();
         services.AddHostedService<FileGeneratorService>();
 
         return services;

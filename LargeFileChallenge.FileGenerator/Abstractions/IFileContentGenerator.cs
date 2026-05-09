@@ -2,7 +2,7 @@
 
 public interface IFileContentGenerator
 {
-    Task Generate(
+    Task GenerateAsync(
         string sampleFilePath,
         string targetFilePath,
         long targetSize,
