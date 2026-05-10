@@ -5,6 +5,6 @@ public interface IFileSplitter
     Task SplitAsync(
         string inputFilePath,
         string tempFolderPath,
-        int chunkSize,
+        long chunkSize,
         CancellationToken cancellationToken = default);
 }

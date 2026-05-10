@@ -17,7 +17,7 @@ static IHostBuilder CreateDefaultBuilder()
             app.AddJsonFile(filename, optional: false);
         })
         .ConfigureServices((context, services) => {
-            services.AddFileSorterServices();
+            services.AddFileSorterServices(context.Configuration);
             services.AddSingleton(Console.Out);
             services.AddSingleton(Console.In);
         })
