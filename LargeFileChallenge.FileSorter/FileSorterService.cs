@@ -6,10 +6,12 @@ namespace LargeFileChallenge.FileSorter;
 public class FileSorterService(
     IFileSplitter fileSplitter,
     IFileContentSorter fileContentSorter,
+    IMultipleFileMerger multipleFileMerger,
     TextWriter textWriter) : BackgroundService
 {
     private readonly IFileSplitter _fileSplitter = fileSplitter;
     private readonly IFileContentSorter _fileContentSorter = fileContentSorter;
+    private readonly IMultipleFileMerger _multipleFileMerger = multipleFileMerger;
     private readonly TextWriter _textWriter = textWriter;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -28,6 +30,9 @@ public class FileSorterService(
         {
             await _fileContentSorter.SortAsync(filename, cancellationToken);
         });
+
+        await _textWriter.WriteLineAsync("Merging...");
+        await _multipleFileMerger.MergeAsync(chunkFileNames, "LargeFile.sorted.txt", stoppingToken);
 
         await _textWriter.WriteLineAsync("Done");
     }

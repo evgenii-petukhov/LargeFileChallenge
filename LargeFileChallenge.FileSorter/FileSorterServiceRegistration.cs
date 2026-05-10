@@ -14,6 +14,7 @@ public static class FileSorterServiceRegistration
     {
         services.AddScoped<IFileSplitter, FileSplitter>();
         services.AddScoped<IFileContentSorter, FileContentSorter>();
+        services.AddScoped<IMultipleFileMerger, MultipleFileMerger>();
         services.Configure<IoSettings>(configuration.GetSection("IO"));
         services.AddHostedService<FileSorterService>();
 
