@@ -14,13 +14,13 @@ public class FileGeneratorService(
     private readonly IHostApplicationLifetime _lifetime = lifetime;
     private readonly TextWriter _textWriter = textWriter;
 
-    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var (terminate, targetSize) = await _consoleFileSizeProvider.GetFileSize(cancellationToken);
+        var (terminate, targetSize) = await _consoleFileSizeProvider.GetFileSize(stoppingToken);
 
         if (!terminate)
         {
-            await _fileContentGenerator.GenerateAsync("SampleStrings.txt", "LargeFile.txt", targetSize, cancellationToken);
+            await _fileContentGenerator.GenerateAsync("SampleStrings.txt", "LargeFile.txt", targetSize, stoppingToken);
             await _textWriter.WriteLineAsync("File has been generated successfully");
             await _textWriter.WriteLineAsync();
         }

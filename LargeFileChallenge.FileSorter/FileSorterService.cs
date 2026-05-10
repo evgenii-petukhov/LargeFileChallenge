@@ -1,11 +1,14 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿using LargeFileChallenge.FileSorter.Abstractions;
+using Microsoft.Extensions.Hosting;
 
 namespace LargeFileChallenge.FileSorter;
 
-public class FileSorterService : BackgroundService
+public class FileSorterService(IFileSplitter fileSplitter) : BackgroundService
 {
-    protected override Task ExecuteAsync(CancellationToken stoppingToken)
+    private readonly IFileSplitter _fileSplitter = fileSplitter;
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        throw new NotImplementedException();
+        await _fileSplitter.SplitAsync("LargeFile.txt", "tmp", 10 * 1024 * 1024, stoppingToken);
     }
 }

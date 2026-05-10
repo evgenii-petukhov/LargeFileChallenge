@@ -1,5 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+﻿using LargeFileChallenge.FileSorter.Abstractions;
+using LargeFileChallenge.FileSorter.Services;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace LargeFileChallenge.FileSorter;
 
@@ -7,7 +8,8 @@ public static class FileSorterServiceRegistration
 {
     public static IServiceCollection AddFileSorterServices(this IServiceCollection services)
     {
-        services.AddHostedService<BackgroundService>();
+        services.AddScoped<IFileSplitter, FileSplitter>();
+        services.AddHostedService<FileSorterService>();
 
         return services;
     }
