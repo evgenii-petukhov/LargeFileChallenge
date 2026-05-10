@@ -13,6 +13,7 @@ public static class FileSorterServiceRegistration
         IConfiguration configuration)
     {
         services.AddScoped<IFileSplitter, FileSplitter>();
+        services.AddScoped<IFileContentSorter, FileContentSorter>();
         services.Configure<IoSettings>(configuration.GetSection("IO"));
         services.AddHostedService<FileSorterService>();
 

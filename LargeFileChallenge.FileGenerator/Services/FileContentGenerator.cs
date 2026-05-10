@@ -40,12 +40,11 @@ public class FileContentGenerator(
                 .Select(s => $"{_random.Next(MaxNumber)}. {s}")
                 .OrderBy(_ => _random.Next());
 
-            var textChunk = string.Join(Environment.NewLine, shuffledStringsEnumerable);
+            var textChunk = string.Join(Environment.NewLine, shuffledStringsEnumerable) + Environment.NewLine;
 
             var bytes = Encoding.UTF8.GetBytes(textChunk);
 
             await stream.WriteAsync(bytes, cancellationToken);
-            await stream.FlushAsync(cancellationToken);
 
             currentSize += bytes.Length;
 

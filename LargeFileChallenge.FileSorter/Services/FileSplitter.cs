@@ -1,6 +1,7 @@
 ﻿using LargeFileChallenge.FileSorter.Abstractions;
 using LargeFileChallenge.FileSorter.Models;
 using Microsoft.Extensions.Options;
+using System.Globalization;
 
 namespace LargeFileChallenge.FileSorter.Services;
 
@@ -8,14 +9,11 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
 {
     private readonly IoSettings _ioSettings = options.Value;
 
-    public async Task SplitAsync(
+    public async Task<List<string>> SplitAsync(
         string inputFilePath,
         string tempFolderPath,
-        long chunkSize,
         CancellationToken cancellationToken = default)
     {
-        ArgumentOutOfRangeException.ThrowIfLessThan(chunkSize, 1);
-
         if (!File.Exists(inputFilePath))
         {
             throw new FileNotFoundException(inputFilePath);
@@ -26,9 +24,12 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
             Directory.CreateDirectory(tempFolderPath);
         }
 
+        var outputFiles = new List<string>();
+
         int fileIndex = 0;
         int bytesRead = 0;
         int readBufferSize = _ioSettings.ReadBufferSize;
+        long chunkSize = _ioSettings.ChunkSize;
 
         var buffer = new byte[readBufferSize];
         await using var sourceFile = new FileStream(
@@ -40,7 +41,9 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
             options: FileOptions.Asynchronous | FileOptions.SequentialScan);
         do
         {
-            var targetFilePath = Path.Combine(tempFolderPath, $"chunk_{fileIndex}.txt");
+            var targetFilePath = Path.Combine(
+                tempFolderPath,
+                string.Format(CultureInfo.InvariantCulture, _ioSettings.ChunkNameTemplate!, fileIndex));
             await using var targetFile = new FileStream(
                 targetFilePath,
                 FileMode.Create,
@@ -48,6 +51,7 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
                 FileShare.None,
                 bufferSize: _ioSettings.WriteBufferSize,
                 options: FileOptions.Asynchronous);
+            outputFiles.Add(targetFilePath); 
 
             long nextChunkOffset = -1L;
             long bytesReadInChunk = 0L;
@@ -58,7 +62,7 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
                 if (bytesRead < readBufferSize)
                 {
                     await targetFile.WriteAsync(buffer.AsMemory(0, bytesRead), cancellationToken);
-                    return;
+                    return outputFiles;
                 }
 
                 if (bytesReadInChunk < chunkSize)
@@ -93,5 +97,7 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
 
             fileIndex++;
         } while (bytesRead == readBufferSize);
+
+        return outputFiles;
     }
 }
