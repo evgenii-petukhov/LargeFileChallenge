@@ -17,7 +17,7 @@ static IHostBuilder CreateDefaultBuilder()
             app.AddJsonFile(filename, optional: false);
         })
         .ConfigureServices((context, services) => {
-            services.AddFileGeneratorServices();
+            services.AddFileGeneratorServices(context.Configuration);
             services.AddSingleton(Console.Out);
             services.AddSingleton(Console.In);
         })

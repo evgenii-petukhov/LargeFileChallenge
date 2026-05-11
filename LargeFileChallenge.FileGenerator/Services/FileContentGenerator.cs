@@ -1,16 +1,18 @@
 ﻿using LargeFileChallenge.FileGenerator.Abstractions;
+using LargeFileChallenge.FileGenerator.Models;
 using LargeFileChallenge.ProgressReporting.Abstractions;
+using Microsoft.Extensions.Options;
 using System.Text;
 
 namespace LargeFileChallenge.FileGenerator.Services;
 
 public class FileContentGenerator(
-    IConsoleProgressReporter consoleProgressReporter) : IFileContentGenerator
+    IConsoleProgressReporter consoleProgressReporter,
+    IOptions<IoSettings> options) : IFileContentGenerator
 {
-    private const int MaxNumber = 100000;
-
     private readonly Random _random = new((int)DateTime.Now.Ticks & 0x0000FFFF);
     private readonly IConsoleProgressReporter _consoleProgressReporter = consoleProgressReporter;
+    private readonly IoSettings _ioSettings = options.Value;
 
     public async Task GenerateAsync(
         string sampleFilePath,
@@ -32,13 +34,13 @@ public class FileContentGenerator(
             FileMode.Create,
             FileAccess.Write,
             FileShare.None,
-            bufferSize: 8192,
+            bufferSize: _ioSettings.WriteBufferSize,
             options: FileOptions.Asynchronous);
 
         while (currentSize < targetSize)
         {
             var shuffledStringsEnumerable = sampleStrings
-                .Select(s => $"{_random.Next(MaxNumber)}. {s}")
+                .Select(s => $"{_random.Next()}. {s}")
                 .OrderBy(_ => _random.Next());
 
             var textChunk = string.Join(Environment.NewLine, shuffledStringsEnumerable) + Environment.NewLine;
