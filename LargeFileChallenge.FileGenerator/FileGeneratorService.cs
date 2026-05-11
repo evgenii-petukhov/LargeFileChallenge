@@ -16,6 +16,8 @@ public class FileGeneratorService(
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // Small delay to ensure the console is ready before writing output
+        await Task.Delay(1000, stoppingToken);
         var (terminate, targetSize) = await _consoleFileSizeProvider.GetFileSize(stoppingToken);
 
         if (!terminate)
