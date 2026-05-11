@@ -1,4 +1,5 @@
 ﻿using LargeFileChallenge.FileGenerator.Abstractions;
+using LargeFileChallenge.ProgressReporting.Abstractions;
 using System.Text;
 
 namespace LargeFileChallenge.FileGenerator.Services;

@@ -1,6 +1,6 @@
-﻿using LargeFileChallenge.FileGenerator.Abstractions;
+﻿using LargeFileChallenge.ProgressReporting.Abstractions;
 
-namespace LargeFileChallenge.FileGenerator.Services;
+namespace LargeFileChallenge.ProgressReporting;
 
 public class ConsoleProgressReporter(TextWriter textWriter) : IConsoleProgressReporter
 {
@@ -10,7 +10,7 @@ public class ConsoleProgressReporter(TextWriter textWriter) : IConsoleProgressRe
 
     public async Task UpdateProgressAsync(int currentProgress, CancellationToken cancellationToken = default)
     {
-        if (currentProgress < _progress + 10) return;
+        if (currentProgress < _progress + 1) return;
 
         _progress = currentProgress;
 

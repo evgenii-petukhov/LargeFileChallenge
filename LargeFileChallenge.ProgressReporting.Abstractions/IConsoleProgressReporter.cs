@@ -1,4 +1,4 @@
-﻿namespace LargeFileChallenge.FileGenerator.Abstractions;
+﻿namespace LargeFileChallenge.ProgressReporting.Abstractions;
 
 public interface IConsoleProgressReporter
 {

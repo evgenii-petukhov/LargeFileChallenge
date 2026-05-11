@@ -1,5 +1,7 @@
 ﻿using LargeFileChallenge.FileGenerator.Abstractions;
 using LargeFileChallenge.FileGenerator.Services;
+using LargeFileChallenge.ProgressReporting;
+using LargeFileChallenge.ProgressReporting.Abstractions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace LargeFileChallenge.FileGenerator;
