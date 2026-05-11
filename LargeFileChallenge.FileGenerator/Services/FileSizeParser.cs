@@ -1,7 +1,7 @@
 ﻿using LargeFileChallenge.FileGenerator.Abstractions;
 using System.Text.RegularExpressions;
 
-namespace LargeFileChallenge.FileGenerator;
+namespace LargeFileChallenge.FileGenerator.Services;
 
 public partial class FileSizeParser : IFileSizeParser
 {

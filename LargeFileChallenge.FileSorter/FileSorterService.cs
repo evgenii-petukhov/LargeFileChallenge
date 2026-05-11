@@ -9,12 +9,14 @@ public class FileSorterService(
     IFileContentSorter fileContentSorter,
     IMultipleFileMerger multipleFileMerger,
     TextWriter textWriter,
+    TextReader textReader,
     IHostApplicationLifetime lifetime) : BackgroundService
 {
     private readonly IFileSplitter _fileSplitter = fileSplitter;
     private readonly IFileContentSorter _fileContentSorter = fileContentSorter;
     private readonly IMultipleFileMerger _multipleFileMerger = multipleFileMerger;
     private readonly TextWriter _textWriter = textWriter;
+    private readonly TextReader _textReader = textReader;
     private readonly IHostApplicationLifetime _lifetime = lifetime;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -58,6 +60,7 @@ public class FileSorterService(
 
         var elapsedTotal = swTotal.Elapsed.TotalSeconds;
         await _textWriter.WriteLineAsync($"\r\nTotal: {elapsedTotal:F2} seconds\r\n");
+        await _textReader.ReadLineAsync(stoppingToken);
         _lifetime.StopApplication();
     }
 }

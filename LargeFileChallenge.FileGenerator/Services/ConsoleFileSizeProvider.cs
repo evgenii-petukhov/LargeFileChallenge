@@ -9,15 +9,16 @@ public class ConsoleFileSizeProvider(
     TextWriter textWriter,
     ILogger<ConsoleFileSizeProvider> logger) : IConsoleFileSizeProvider
 {
-    private readonly IFileSizeParser _fileSizeParser = fileSizeParser;
-    private readonly TextReader _textReader = textReader;
-    private readonly TextWriter _textWriter = textWriter;
-    private readonly ILogger<ConsoleFileSizeProvider> _logger = logger;
-    private readonly HashSet<string> _terminateCommands = new(StringComparer.OrdinalIgnoreCase)
+    private static readonly HashSet<string> _terminateCommands = new(StringComparer.OrdinalIgnoreCase)
     {
         "EXIT",
         "QUIT"
     };
+
+    private readonly IFileSizeParser _fileSizeParser = fileSizeParser;
+    private readonly TextReader _textReader = textReader;
+    private readonly TextWriter _textWriter = textWriter;
+    private readonly ILogger<ConsoleFileSizeProvider> _logger = logger;
 
     public async Task<(bool terminate, long size)> GetFileSize(CancellationToken cancellationToken = default)
     {
@@ -26,14 +27,15 @@ public class ConsoleFileSizeProvider(
 
         do
         {
-            await _textWriter.WriteLineAsync("Enter target size (e.g., 100MB, 10GB, 1TB). Type 'exit' or 'quit' to close");
+            await _textWriter.WriteLineAsync("\r\nEnter the target file size (e.g. 100MB, 10GB, 1TB):");
+            await _textWriter.WriteLineAsync("Type 'exit' or 'quit' to cancel.");
             try
             {
                 var input = (await _textReader.ReadLineAsync(cancellationToken))?.Trim();
 
                 if (string.IsNullOrWhiteSpace(input))
                 {
-                    await _textWriter.WriteLineAsync("Input cannot be empty. Please enter a valid target size.");
+                    await _textWriter.WriteLineAsync("\r\nSize cannot be empty. Please try again.");
                     continue;
                 }
 
@@ -45,17 +47,18 @@ public class ConsoleFileSizeProvider(
 
                 targetSize = _fileSizeParser.Parse(input!);
 
-                await _textWriter.WriteLineAsync(targetSize > 0
-                    ? $"Target size set to {targetSize} bytes"
-                    : "Please enter a positive target size");
+                if (targetSize <= 0)
+                {
+                    await _textWriter.WriteLineAsync("\r\nSize must be greater than zero. Please try again.");
+                }
             }
             catch (ArgumentException e)
             {
-                await _textWriter.WriteLineAsync(e.Message);
+                await _textWriter.WriteLineAsync("\r\n" + e.Message);
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "An unexpected exception occurred");
+                _logger.LogError(e, "\r\nAn unexpected exception occurred");
             }
         } while (!terminate && targetSize <= 0);
 
