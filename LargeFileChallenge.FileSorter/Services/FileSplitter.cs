@@ -72,15 +72,7 @@ public class FileSplitter(IOptions<IoSettings> options) : IFileSplitter
                     continue;
                 }
 
-                int newLineIndex;
-
-                for (newLineIndex = bytesRead - 1; newLineIndex >= 0; newLineIndex--)
-                {
-                    if (buffer[newLineIndex] == '\n')
-                    {
-                        break;
-                    }
-                }
+                int newLineIndex = buffer.AsSpan(0, bytesRead).LastIndexOf((byte)'\n');
 
                 if (newLineIndex > -1)
                 {
