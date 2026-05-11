@@ -3,7 +3,8 @@
 public interface IMultipleFileMerger
 {
     Task MergeAsync(
-        List<string> chunkFiles,
+        string tempFolder,
+        List<string> chunkFileNames,
         string outputPath,
         CancellationToken cancellationToken = default);
 }

@@ -31,6 +31,8 @@ public class FileSorterService(
         // Small delay to ensure the console is ready before writing output
         await Task.Delay(1000, stoppingToken);
 
+        var tempFolder = Path.Combine(AppContext.BaseDirectory, "tmp", Guid.NewGuid().ToString());
+
         var (terminate, fileName) = await _consoleFileNameProvider.GetFileName(true, stoppingToken);
         if (terminate)
         {
@@ -45,7 +47,7 @@ public class FileSorterService(
         await _textWriter.WriteAsync("\r\nSplitting... ");
         var sw = Stopwatch.StartNew();
         var swTotal = Stopwatch.StartNew();
-        var chunkFileNames = await _fileSplitter.SplitAsync(fileName, "tmp", stoppingToken);
+        var chunkFileNames = await _fileSplitter.SplitAsync(fileName, tempFolder, stoppingToken);
         await _textWriter.WriteLineAsync($"done in {FormatElapsed(sw.Elapsed)}");
 
         // Step 2: Sort each chunk in parallel
@@ -67,7 +69,7 @@ public class FileSorterService(
         sw.Restart();
 
         var targetFileName = Path.GetFileNameWithoutExtension(fileName) + ".sorted" + Path.GetExtension(fileName);
-        await _multipleFileMerger.MergeAsync(chunkFileNames, targetFileName, stoppingToken);
+        await _multipleFileMerger.MergeAsync(tempFolder, chunkFileNames, targetFileName, stoppingToken);
         await _textWriter.WriteLineAsync($"done in {FormatElapsed(sw.Elapsed)}");
         await _textWriter.WriteLineAsync($"----------------------------------");
         await _textWriter.WriteLineAsync($"Total: {FormatElapsed(swTotal.Elapsed)}");

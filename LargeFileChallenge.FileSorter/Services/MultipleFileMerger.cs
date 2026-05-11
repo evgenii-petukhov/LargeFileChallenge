@@ -10,17 +10,18 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
     private readonly IoSettings _ioSettings = options.Value;
 
     public async Task MergeAsync(
-        List<string> chunkFiles,
+        string tempFolder,
+        List<string> chunkFileNames,
         string outputPath,
         CancellationToken cancellationToken = default)
     {
-        var readers = new List<BinaryReader>(chunkFiles.Count);
+        var readers = new List<BinaryReader>(chunkFileNames.Count);
         try
         {
-            foreach (var f in chunkFiles)
+            foreach (var chunkFileName in chunkFileNames)
             {
                 var fs = new FileStream(
-                    f,
+                    Path.Combine(tempFolder, chunkFileName),
                     FileMode.Open,
                     FileAccess.Read,
                     FileShare.Read,
@@ -70,6 +71,7 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
             {
                 r.Dispose();
             }
+            Directory.Delete(tempFolder, true);
         }
     }
 
