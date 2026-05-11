@@ -37,15 +37,21 @@ public class FileContentGenerator(
             bufferSize: _ioSettings.WriteBufferSize,
             options: FileOptions.Asynchronous);
 
+        var newLineBytes = Encoding.UTF8.GetBytes(Environment.NewLine);
+
         while (currentSize < targetSize)
         {
+            if (currentSize > 0)
+            {
+                await stream.WriteAsync(newLineBytes, cancellationToken);
+                currentSize += newLineBytes.Length;
+            }
+
             var shuffledStringsEnumerable = sampleStrings
                 .Select(s => $"{_random.Next()}. {s}")
                 .OrderBy(_ => _random.Next());
 
-            var textChunk = string.Join(Environment.NewLine, shuffledStringsEnumerable) + Environment.NewLine;
-
-            var bytes = Encoding.UTF8.GetBytes(textChunk);
+            var bytes = Encoding.UTF8.GetBytes(string.Join(Environment.NewLine, shuffledStringsEnumerable));
 
             await stream.WriteAsync(bytes, cancellationToken);
 

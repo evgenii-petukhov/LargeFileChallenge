@@ -50,12 +50,15 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
                 TryEnqueueRecord(pq, readers[i], i);
             }
 
+            var first = true;
             while (pq.Count > 0)
             {
                 var item = pq.Dequeue();
+                if (!first) writer.Write("\r\n");
                 writer.Write(item.Number);
                 writer.Write(". ");
-                writer.WriteLine(item.Text);
+                writer.Write(item.Text);
+                first = false;
                 TryEnqueueRecord(pq, readers[item.ReaderIndex], item.ReaderIndex);
             }
 
