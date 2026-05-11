@@ -1,8 +1,7 @@
-﻿
-using LargeFileChallenge.FileGenerator.Abstractions;
+﻿using LargeFileChallenge.UserInput.Abstractions;
 using Microsoft.Extensions.Logging;
 
-namespace LargeFileChallenge.FileGenerator.Services;
+namespace LargeFileChallenge.UserInput;
 
 public class ConsoleFileNameProvider(
     IFileNameValidator fileNameValidator,
@@ -10,44 +9,45 @@ public class ConsoleFileNameProvider(
     TextWriter textWriter,
     ILogger<ConsoleFileSizeProvider> logger) : IConsoleFileNameProvider
 {
-    private static readonly HashSet<string> _terminateCommands = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "EXIT",
-        "QUIT"
-    };
-
     private readonly IFileNameValidator _fileNameValidator = fileNameValidator;
     private readonly TextReader _textReader = textReader;
     private readonly TextWriter _textWriter = textWriter;
     private readonly ILogger<ConsoleFileSizeProvider> _logger = logger;
 
-    public async Task<(bool terminate, string fileName)> GetFileName(CancellationToken cancellationToken = default)
+    public async Task<(bool terminate, string fileName)> GetFileName(
+        bool validateFileExists,
+        CancellationToken cancellationToken = default)
     {
         var terminate = false;
         var isValid = false;
-        string fileName = null!;
+        string input = null!;
 
         do
         {
-            await _textWriter.WriteLineAsync("\r\nEnter the output file name or full path:");
-            await _textWriter.WriteLineAsync("Type 'exit' or 'quit' to cancel.");
+            await _textWriter.WriteLineAsync("\r\nEnter file name or full path");
             try
             {
-                fileName = (await _textReader.ReadLineAsync(cancellationToken))?.Trim()!;
+                input = (await _textReader.ReadLineAsync(cancellationToken))?.Trim()!;
 
-                if (string.IsNullOrWhiteSpace(fileName))
+                if (string.IsNullOrWhiteSpace(input))
                 {
                     await _textWriter.WriteLineAsync("\r\nFile name cannot be empty. Please try again.");
                     continue;
                 }
 
-                if (!_fileNameValidator.IsValid(fileName))
+                if (!_fileNameValidator.IsValid(input))
                 {
                     await _textWriter.WriteLineAsync("\r\nInvalid file name. Please enter a valid file name or full path.");
                     continue;
                 }
 
-                if (_terminateCommands.Contains(fileName))
+                if (validateFileExists && !File.Exists(input))
+                {
+                    await _textWriter.WriteLineAsync("\r\nThe specified file doesn't exist.");
+                    continue;
+                }
+
+                if (UserInputConstants.TerminateCommands.Contains(input))
                 {
                     terminate = true;
                     break;
@@ -65,6 +65,6 @@ public class ConsoleFileNameProvider(
             }
         } while (!terminate && !isValid);
 
-        return (terminate, fileName!);
+        return (terminate, input!);
     }
 }

@@ -1,6 +1,7 @@
 ﻿using LargeFileChallenge.FileSorter.Abstractions;
 using LargeFileChallenge.FileSorter.Models;
 using LargeFileChallenge.FileSorter.Services;
+using LargeFileChallenge.UserInput;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,6 +18,7 @@ public static class FileSorterServiceRegistration
         services.AddScoped<IMultipleFileMerger, MultipleFileMerger>();
         services.Configure<IoSettings>(configuration.GetSection("IO"));
         services.AddHostedService<FileSorterService>();
+        services.AddUserInputServices();
 
         return services;
     }

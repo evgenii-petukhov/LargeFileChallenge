@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36518.9 d17.14
+# Visual Studio Version 18
+VisualStudioVersion = 18.2.11430.68 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.FileGenerator", "LargeFileChallenge.FileGenerator\LargeFileChallenge.FileGenerator.csproj", "{4FA20D3D-91F9-D28F-214B-8F850D3D4074}"
 EndProject
@@ -18,6 +18,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.ProgressReporting.Abstractions", "LargeFileChallenge.ProgressReporting.Abstractions\LargeFileChallenge.ProgressReporting.Abstractions.csproj", "{135C51EA-CC76-4EFA-8EE5-934A37E2B4AE}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.ProgressReporting", "LargeFileChallenge.ProgressReporting\LargeFileChallenge.ProgressReporting.csproj", "{5FAA7F23-0DDA-4C60-90A6-6505D6817B95}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.UserInput", "LargeFileChallenge.UserInput\LargeFileChallenge.UserInput.csproj", "{AF5D8EA7-4347-42CD-A969-C510394D9D9D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LargeFileChallenge.UserInput.Abstractions", "LargeFileChallenge.UserInput.Abstractions\LargeFileChallenge.UserInput.Abstractions.csproj", "{661CD1C3-B841-4181-8378-8CE56286E02E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,14 @@ Global
 		{5FAA7F23-0DDA-4C60-90A6-6505D6817B95}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FAA7F23-0DDA-4C60-90A6-6505D6817B95}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FAA7F23-0DDA-4C60-90A6-6505D6817B95}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AF5D8EA7-4347-42CD-A969-C510394D9D9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AF5D8EA7-4347-42CD-A969-C510394D9D9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AF5D8EA7-4347-42CD-A969-C510394D9D9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AF5D8EA7-4347-42CD-A969-C510394D9D9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{661CD1C3-B841-4181-8378-8CE56286E02E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{661CD1C3-B841-4181-8378-8CE56286E02E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{661CD1C3-B841-4181-8378-8CE56286E02E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{661CD1C3-B841-4181-8378-8CE56286E02E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -53,6 +65,8 @@ Global
 		{9FCB8820-0EAE-4C3F-A689-F914B4BEFC2B} = {38451015-1208-42BF-9987-B8572F9C061D}
 		{135C51EA-CC76-4EFA-8EE5-934A37E2B4AE} = {0852652B-ED08-4E8B-8E92-FCDF588564BB}
 		{5FAA7F23-0DDA-4C60-90A6-6505D6817B95} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{AF5D8EA7-4347-42CD-A969-C510394D9D9D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{661CD1C3-B841-4181-8378-8CE56286E02E} = {0852652B-ED08-4E8B-8E92-FCDF588564BB}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A001F538-6787-468F-9C49-865119DC1A50}

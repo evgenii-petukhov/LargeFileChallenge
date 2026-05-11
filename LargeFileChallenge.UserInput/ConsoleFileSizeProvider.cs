@@ -1,7 +1,7 @@
-﻿using LargeFileChallenge.FileGenerator.Abstractions;
+﻿using LargeFileChallenge.UserInput.Abstractions;
 using Microsoft.Extensions.Logging;
 
-namespace LargeFileChallenge.FileGenerator.Services;
+namespace LargeFileChallenge.UserInput;
 
 public class ConsoleFileSizeProvider(
     IFileSizeParser fileSizeParser,
@@ -9,12 +9,6 @@ public class ConsoleFileSizeProvider(
     TextWriter textWriter,
     ILogger<ConsoleFileSizeProvider> logger) : IConsoleFileSizeProvider
 {
-    private static readonly HashSet<string> _terminateCommands = new(StringComparer.OrdinalIgnoreCase)
-    {
-        "EXIT",
-        "QUIT"
-    };
-
     private readonly IFileSizeParser _fileSizeParser = fileSizeParser;
     private readonly TextReader _textReader = textReader;
     private readonly TextWriter _textWriter = textWriter;
@@ -27,8 +21,7 @@ public class ConsoleFileSizeProvider(
 
         do
         {
-            await _textWriter.WriteLineAsync("\r\nEnter the target file size (e.g. 100MB, 10GB, 1TB):");
-            await _textWriter.WriteLineAsync("Type 'exit' or 'quit' to cancel.");
+            await _textWriter.WriteLineAsync("\r\nEnter the target file size (e.g. 100MB, 10GB, 1TB)");
             try
             {
                 var input = (await _textReader.ReadLineAsync(cancellationToken))?.Trim();
@@ -39,7 +32,7 @@ public class ConsoleFileSizeProvider(
                     continue;
                 }
 
-                if (_terminateCommands.Contains(input))
+                if (UserInputConstants.TerminateCommands.Contains(input))
                 {
                     terminate = true;
                     break;

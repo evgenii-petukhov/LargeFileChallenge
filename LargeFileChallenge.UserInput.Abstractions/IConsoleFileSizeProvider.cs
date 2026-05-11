@@ -1,4 +1,4 @@
-﻿namespace LargeFileChallenge.FileGenerator.Abstractions;
+﻿namespace LargeFileChallenge.UserInput.Abstractions;
 
 public interface IConsoleFileSizeProvider
 {

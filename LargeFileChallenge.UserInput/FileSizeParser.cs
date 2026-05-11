@@ -1,7 +1,7 @@
-﻿using LargeFileChallenge.FileGenerator.Abstractions;
+﻿using LargeFileChallenge.UserInput.Abstractions;
 using System.Text.RegularExpressions;
 
-namespace LargeFileChallenge.FileGenerator.Services;
+namespace LargeFileChallenge.UserInput;
 
 public partial class FileSizeParser : IFileSizeParser
 {
@@ -10,15 +10,6 @@ public partial class FileSizeParser : IFileSizeParser
         RegexOptions.CultureInvariant,
         matchTimeoutMilliseconds: 1000)]
     private static partial Regex MatchFileSizePattern();
-
-    private static readonly Dictionary<string, long> _unitMultipliers = new(StringComparer.Ordinal)
-    {
-        { "B", 1L },
-        { "KB", 1024L },
-        { "MB", 1024L * 1024L },
-        { "GB", 1024L * 1024L * 1024L },
-        { "TB", 1024L * 1024L * 1024L * 1024L }
-    };
 
     public long Parse(string input)
     {
@@ -35,7 +26,7 @@ public partial class FileSizeParser : IFileSizeParser
             }
             var unit = match.Groups["unit"].Value;
 
-            if (_unitMultipliers.TryGetValue(unit, out var multiplier))
+            if (UserInputConstants.UnitMultipliers.TryGetValue(unit, out var multiplier))
             {
                 return size * multiplier;
             }

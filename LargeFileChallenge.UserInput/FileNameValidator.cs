@@ -1,6 +1,6 @@
-﻿using LargeFileChallenge.FileGenerator.Abstractions;
+﻿using LargeFileChallenge.UserInput.Abstractions;
 
-namespace LargeFileChallenge.FileGenerator.Services;
+namespace LargeFileChallenge.UserInput;
 
 public partial class FileNameValidator : IFileNameValidator
 {

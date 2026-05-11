@@ -1,4 +1,5 @@
 ﻿using LargeFileChallenge.FileGenerator.Abstractions;
+using LargeFileChallenge.UserInput.Abstractions;
 using Microsoft.Extensions.Hosting;
 
 namespace LargeFileChallenge.FileGenerator;
@@ -29,7 +30,7 @@ public class FileGeneratorService(
             _lifetime.StopApplication();
         }
 
-        (terminate, string fileName) = await _consoleFileNameProvider.GetFileName(stoppingToken);
+        (terminate, string fileName) = await _consoleFileNameProvider.GetFileName(false, stoppingToken);
         if (terminate)
         {
             _lifetime.StopApplication();
