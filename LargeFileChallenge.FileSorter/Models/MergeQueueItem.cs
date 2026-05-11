@@ -1,8 +1,10 @@
 ﻿namespace LargeFileChallenge.FileSorter.Models;
 
-public readonly struct MergeQueueItem(int readerIndex, string line)
+public readonly struct MergeQueueItem(int readerIndex, int number, string text)
 {
     public int ReaderIndex { get; } = readerIndex;
 
-    public string Line { get; } = line;
+    public int Number { get; } = number;
+
+    public string Text { get; } = text;
 }

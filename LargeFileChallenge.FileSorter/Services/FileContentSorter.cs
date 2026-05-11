@@ -1,29 +1,60 @@
 ﻿using LargeFileChallenge.FileSorter.Abstractions;
+using LargeFileChallenge.FileSorter.Models;
+using Microsoft.Extensions.Options;
+using System.Text;
 
 namespace LargeFileChallenge.FileSorter.Services;
 
-public class FileContentSorter : IFileContentSorter
+public class FileContentSorter(IOptions<IoSettings> options) : IFileContentSorter
 {
+    private readonly IoSettings _ioSettings = options.Value;
+
     public async Task SortAsync(string filePath, CancellationToken cancellationToken = default)
     {
-        var strings = await File.ReadAllLinesAsync(filePath, cancellationToken);
+        var records = new List<(int Number, string Text)>();
 
-        await File.WriteAllLinesAsync(
+        await using var readFs = new FileStream(
             filePath,
-            strings
-                .Select(s =>
-                {
-                    var parts = s.Split(". ");
-                    return new
-                    {
-                        Original = s,
-                        Number = int.Parse(parts[0]),
-                        Text = parts[1]
-                    };
-                })
-                .OrderBy(item => item.Text)
-                .ThenBy(item => item.Number)
-                .Select(item => item.Original),
-            cancellationToken);
+            FileMode.Open,
+            FileAccess.Read,
+            FileShare.Read,
+            bufferSize: _ioSettings.ReadBufferSize,
+            options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+        using (var reader = new StreamReader(
+            readFs,
+            Encoding.UTF8,
+            bufferSize: _ioSettings.ReadBufferSize,
+            leaveOpen: false))
+        {
+            string? line;
+            while ((line = await reader.ReadLineAsync(cancellationToken)) != null)
+            {
+                var sep = line.IndexOf('.');
+                records.Add((int.Parse(line.AsSpan(0, sep)), line[(sep + 2)..]));
+            }
+        }
+
+        records.Sort(static (a, b) =>
+        {
+            var cmp = string.CompareOrdinal(a.Text, b.Text);
+            return cmp != 0 ? cmp : a.Number.CompareTo(b.Number);
+        });
+
+        await using var writeFs = new FileStream(
+            filePath,
+            FileMode.Create,
+            FileAccess.Write,
+            FileShare.None,
+            bufferSize: _ioSettings.WriteBufferSize,
+            options: FileOptions.Asynchronous | FileOptions.SequentialScan);
+
+        await using var writer = new BinaryWriter(writeFs, Encoding.UTF8, leaveOpen: false);
+
+        foreach (var (number, text) in records)
+        {
+            writer.Write(number);
+            writer.Write(text);
+        }
     }
 }
