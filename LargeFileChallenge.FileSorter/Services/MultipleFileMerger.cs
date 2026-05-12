@@ -15,19 +15,22 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
         string outputPath,
         CancellationToken cancellationToken = default)
     {
-        var readers = new List<BinaryReader>(chunkFileNames.Count);
+        var readerInfos = new List<MergeReaderInfo>(chunkFileNames.Count);
         try
         {
-            foreach (var chunkFileName in chunkFileNames)
+            for (var chunkCounter = 0; chunkCounter < chunkFileNames.Count; chunkCounter++)
             {
                 var fs = new FileStream(
-                    Path.Combine(tempFolder, chunkFileName),
+                    Path.Combine(tempFolder, chunkFileNames[chunkCounter]),
                     FileMode.Open,
                     FileAccess.Read,
                     FileShare.Read,
                     bufferSize: _ioSettings.ReadBufferSize,
                     options: FileOptions.SequentialScan);
-                readers.Add(new BinaryReader(fs, Encoding.UTF8, leaveOpen: false));
+                readerInfos.Add(
+                    new MergeReaderInfo(
+                        new BinaryReader(fs, Encoding.UTF8, leaveOpen: false),
+                        chunkCounter));
             }
 
             await using var outFs = new FileStream(
@@ -44,11 +47,11 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
                 _ioSettings.WriteBufferSize,
                 leaveOpen: false);
 
-            var pq = new PriorityQueue<MergeQueueItem, SortKey>(readers.Count);
+            var pq = new PriorityQueue<MergeQueueItem, SortKey>(readerInfos.Count);
 
-            for (int i = 0; i < readers.Count; i++)
+            for (int i = 0; i < readerInfos.Count; i++)
             {
-                TryEnqueueRecord(pq, readers[i], i);
+                TryEnqueueRecord(pq, readerInfos[i]);
             }
 
             var first = true;
@@ -60,16 +63,16 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
                 writer.Write(". ");
                 writer.Write(item.Text);
                 first = false;
-                TryEnqueueRecord(pq, readers[item.ReaderIndex], item.ReaderIndex);
+                TryEnqueueRecord(pq, readerInfos[item.ReaderIndex]);
             }
 
             await writer.FlushAsync(cancellationToken);
         }
         finally
         {
-            foreach (var r in readers)
+            foreach (var info in readerInfos)
             {
-                r.Dispose();
+                info.Reader?.Dispose();
             }
             Directory.Delete(tempFolder, true);
         }
@@ -77,15 +80,21 @@ public partial class MultipleFileMerger(IOptions<IoSettings> options) : IMultipl
 
     private static void TryEnqueueRecord(
         PriorityQueue<MergeQueueItem, SortKey> queue,
-        BinaryReader reader,
-        int readerIndex)
+        MergeReaderInfo readerInfo)
     {
+        if (readerInfo.Reader == null) return;
+
         try
         {
+            var reader = readerInfo.Reader;
             var number = reader.ReadInt32();
             var text = reader.ReadString();
-            queue.Enqueue(new MergeQueueItem(readerIndex, number, text), new SortKey(text, number));
+            queue.Enqueue(new MergeQueueItem(readerInfo.Index, number, text), new SortKey(text, number));
         }
-        catch (EndOfStreamException) { }
+        catch (EndOfStreamException)
+        {
+            readerInfo.Reader?.Dispose();
+            readerInfo.Reader = null;
+        }
     }
 }
